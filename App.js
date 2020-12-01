@@ -3,6 +3,7 @@ import React from 'react';
 import { ScrollView, SafeAreaView } from 'react-native';
 import styled from 'styled-components';
 import Card from './components/Card';
+import { Ionicons } from '@expo/vector-icons';
 
 export default function App() {
   return (
@@ -13,6 +14,8 @@ export default function App() {
             <Avatar source={require('./assets/avatar.jpg')} />
             <Title>Welcome to React native</Title>
             <Name>Lulu</Name>
+            <Ionicons name="ios-notifications" size={32} color="#4775f2" style={{ position: "absolute", right: 20, top: 5 }} />
+
           </TitleBar>
           <Subtitle>Continue learning</Subtitle>
           <ScrollView horizontal={true} style={{ paddingBottom: 30 }} showsHorizontalScrollIndicator={false}>
