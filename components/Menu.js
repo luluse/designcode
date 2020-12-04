@@ -3,10 +3,19 @@ import styled from 'styled-components';
 import { Animated, TouchableOpacity, Dimensions } from 'react-native';
 import { Ionicons } from "@expo/vector-icons";
 import MenuItem from './MenuItems';
-import { connect } from 'react-redux'
+import { connect } from 'react-redux';
 
 function mapStateToProps(state) {
   return { action: state.action }
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    closeMenu: () =>
+      dispatch({
+        type: 'CLOSE_MENU'
+      })
+  };
 }
 
 const screenHeight = Dimensions.get('window').height;
@@ -20,6 +29,9 @@ class Menu extends React.Component {
     this.toggleMenu();
   }
   
+  componentDidUpdate(){
+    this.toggleMenu();
+  }
 
   toggleMenu = () => {
     if (this.props.action === 'openMenu'){
@@ -43,7 +55,7 @@ class Menu extends React.Component {
           <Subtitle>lulu@gmail.com</Subtitle>
 
         </Cover>
-        <TouchableOpacity onPress={this.toggleMenu} style={{ position: 'absolute', top: 120, left: '50%', marginLeft: -22, zIndex: 1 }}>
+        <TouchableOpacity onPress={this.props.closeMenu} style={{ position: 'absolute', top: 120, left: '50%', marginLeft: -22, zIndex: 1 }}>
           <CloseView>
             <Ionicons name="ios-close" size={44} color="#546bfb" /></CloseView>
         </TouchableOpacity>
@@ -63,7 +75,7 @@ class Menu extends React.Component {
 }
 
 export default connect(
-  mapStateToProps
+  mapStateToProps, mapDispatchToProps
 )(Menu);
 
 const Container = styled.View`

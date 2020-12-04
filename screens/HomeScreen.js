@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { ScrollView, SafeAreaView, ImagePropTypes } from 'react-native';
+import { ScrollView, SafeAreaView, TouchableOpacity } from 'react-native';
 import styled from 'styled-components';
 import Card from '../components/Card';
 import Course from '../components/Course';
@@ -8,59 +8,78 @@ import Course from '../components/Course';
 import { NotificationIcon } from '../components/Icons';
 import Logo from '../components/Logo';
 import Menu from '../components/Menu';
+import { connect } from "react-redux";
 
-export default class HomeScreen extends React.Component {
-  render(){
+function mapStateToProps(state) {
+  return { action: state.action };
+}
 
-  return (
-    <Container>
-      <Menu />
-      <SafeAreaView>
-        <ScrollView style={{ height: '100%' }}>
-          <TitleBar>
-            <Avatar source={require('../assets/avatar.jpg')} />
-            <Title>Welcome to React native</Title>
-            <Name>Lulu</Name>
-            <NotificationIcon style={{ position: "absolute", right: 20, top: 5 }} />
+function mapDispatchToProps(dispatch) {
+  return {
+    openMenu: () =>
+      dispatch({
+        type: 'OPEN_MENU'
+      })
+  };
+}
 
-          </TitleBar>
-          <ScrollView style={{ flexDirection: 'row', padding: 20, paddingLeft: 12, paddingTop: 30}} horizontal={true} showsHorizontalScrollIndicator={false}>
-            {logos.map((logo, index) => (
-               <Logo key={index} image={logo.image} text={logo.text} />
+class HomeScreen extends React.Component {
+  render() {
+
+    return (
+      <Container>
+        <Menu />
+        <SafeAreaView>
+          <ScrollView style={{ height: '100%' }}>
+            <TitleBar>
+              <TouchableOpacity onPress={this.props.openMenu}>
+                <Avatar source={require('../assets/avatar.jpg')} />
+              </TouchableOpacity>
+              <Title>Welcome to React native</Title>
+              <Name>Lulu</Name>
+              <NotificationIcon style={{ position: "absolute", right: 20, top: 5 }} />
+
+            </TitleBar>
+            <ScrollView style={{ flexDirection: 'row', padding: 20, paddingLeft: 12, paddingTop: 30 }} horizontal={true} showsHorizontalScrollIndicator={false}>
+              {logos.map((logo, index) => (
+                <Logo key={index} image={logo.image} text={logo.text} />
+              ))}
+
+            </ScrollView>
+            <Subtitle>Continue learning</Subtitle>
+            <ScrollView horizontal={true} style={{ paddingBottom: 30 }} showsHorizontalScrollIndicator={false}>
+              {cards.map((card, index) => (
+                <Card
+                  key={index}
+                  title={card.title}
+                  image={card.image}
+                  caption={card.caption}
+                  logo={card.logo}
+                  subtitle={card.subtitle}
+                />
+              ))}
+
+            </ScrollView>
+            <Subtitle> Popular Courses</Subtitle>
+            {courses.map((course, index) => (
+              <Course key={index}
+                title={course.title}
+                subtitle={course.subtitle}
+                image={course.image}
+                logo={course.logo}
+                author={course.author}
+                avatar={course.avatar}
+                caption={course.caption} />
             ))}
-         
+
           </ScrollView>
-          <Subtitle>Continue learning</Subtitle>
-          <ScrollView horizontal={true} style={{ paddingBottom: 30 }} showsHorizontalScrollIndicator={false}>
-            {cards.map((card, index)=> (
-              <Card
-              key={index}
-              title={card.title}
-              image={card.image}
-              caption={card.caption}
-              logo={card.logo}
-              subtitle={card.subtitle}
-            />
-            ))}
-          
-          </ScrollView>
-          <Subtitle> Popular Courses</Subtitle>
-          {courses.map((course, index)=>(
-            <Course key={index} 
-            title={course.title}
-            subtitle={course.subtitle}
-            image={course.image} 
-            logo={course.logo}
-            author={course.author}
-            avatar={course.avatar}
-            caption={course.caption}/>
-          ))}
-          
-        </ScrollView>
-      </SafeAreaView>
-    </Container>
-  );
-}}
+        </SafeAreaView>
+      </Container>
+    );
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(HomeScreen)
 
 const Subtitle = styled.Text`
 color: #b8bece;
@@ -101,36 +120,32 @@ width: 44px;
 height: 44px;
 background: black;
 border-radius: 22px;
-margin-left: 20px;
-position: absolute;
-top: 0;
-left: 0;
 `
 
 const logos = [
   {
     image: require('../assets/logo-framerx.png'),
-    text:'Framer X'
+    text: 'Framer X'
   },
   {
-    image:require('../assets/logo-figma.png'),
-    text:'Figma'
+    image: require('../assets/logo-figma.png'),
+    text: 'Figma'
   },
   {
-    image:require('../assets/logo-studio.png'),
-    text:'Studio'
+    image: require('../assets/logo-studio.png'),
+    text: 'Studio'
   },
   {
-    image:require('../assets/logo-react.png'),
-    text:'React'
+    image: require('../assets/logo-react.png'),
+    text: 'React'
   },
   {
-    image:require('../assets/logo-swift.png'),
-    text:'Swift'
+    image: require('../assets/logo-swift.png'),
+    text: 'Swift'
   },
   {
-    image:require('../assets/logo-sketch.png'),
-    text:'Sketch'
+    image: require('../assets/logo-sketch.png'),
+    text: 'Sketch'
   }
 ];
 
