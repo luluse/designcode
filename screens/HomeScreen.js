@@ -8,9 +8,10 @@ import { NotificationIcon } from '../components/Icons';
 import Logo from '../components/Logo';
 import Menu from '../components/Menu';
 import { connect } from "react-redux";
+import Avatar from '../components/Avatar';
 
 function mapStateToProps(state) {
-  return { action: state.action };
+  return { action: state.action, name: state.name };
 }
 
 function mapDispatchToProps(dispatch) {
@@ -75,10 +76,10 @@ class HomeScreen extends React.Component {
           <ScrollView style={{ height: '100%' }}>
             <TitleBar>
               <TouchableOpacity onPress={this.props.openMenu} style={{ position: 'absolute', top: 0, left: 20}}>
-                <Avatar source={require('../assets/avatar.jpg')} />
+              <Avatar />
               </TouchableOpacity>
               <Title>Welcome to React native</Title>
-              <Name>Lulu</Name>
+              <Name>{this.props.name}</Name>
               <NotificationIcon style={{ position: "absolute", right: 20, top: 5 }} />
 
             </TitleBar>
@@ -164,12 +165,6 @@ margin-top: 50px;
 padding-left: 80px; 
 `;
 
-const Avatar = styled.Image`
-width: 44px;
-height: 44px;
-background: black;
-border-radius: 22px;
-`
 
 const logos = [
   {
