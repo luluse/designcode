@@ -91,6 +91,9 @@ class HomeScreen extends React.Component {
             <Subtitle>Continue learning</Subtitle>
             <ScrollView horizontal={true} style={{ paddingBottom: 30 }} showsHorizontalScrollIndicator={false}>
               {cards.map((card, index) => (
+                <TouchableOpacity key={index} onPress={() => {
+                  this.props.navigation.push("Section");
+                }}>
                 <Card
                   key={index}
                   title={card.title}
@@ -99,6 +102,7 @@ class HomeScreen extends React.Component {
                   logo={card.logo}
                   subtitle={card.subtitle}
                 />
+                </TouchableOpacity>
               ))}
 
             </ScrollView>
