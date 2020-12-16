@@ -95,7 +95,9 @@ class HomeScreen extends React.Component {
             <ScrollView horizontal={true} style={{ paddingBottom: 30 }} showsHorizontalScrollIndicator={false}>
               {cards.map((card, index) => (
                 <TouchableOpacity key={index} onPress={() => {
-                  this.props.navigation.push("Section");
+                  this.props.navigation.push("Section", {
+                    section: card
+                  });
                 }}>
                 <Card
                   key={index}
