@@ -7,9 +7,12 @@ class SectionScreen extends React.Component {
     header: null
   };
   render() {
+    const { navigation } = this.props
+    const section = navigation.getParam('section');
+
     return (
       <Container>
-        <Text>Section Screen</Text>
+        <Text>{section.title}</Text>
         <Button
           title="Close"
           onPress={() => {
