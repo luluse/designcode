@@ -1,7 +1,9 @@
 import React from "react";
 import styled from "styled-components";
-import { TouchableOpacity, StatusBar } from "react-native";
+import { TouchableOpacity, StatusBar, Linking, ScrollView } from "react-native";
+import { WebView } from 'react-native-webview';
 import { Ionicons } from "@expo/vector-icons";
+import Markdown from "react-native-showdown";
 
 class SectionScreen extends React.Component {
   static navigationOptions = {
@@ -21,10 +23,11 @@ class SectionScreen extends React.Component {
     const section = navigation.getParam('section');
 
     return (
+      <ScrollView>
       <Container>
         <StatusBar hidden />
         <Cover>
-          <Image source={{uri: section.image.url}} />
+          <Image source={{ uri: section.image.url }} />
 
           <Wrapper>
             <Logo source={{ uri: section.logo.url }} />
@@ -53,12 +56,95 @@ class SectionScreen extends React.Component {
             />
           </CloseView>
         </TouchableOpacity>
+        <Content>
+          {/* <WebView
+            source={{ html: section.content + htmlStyles }} scalesPageToFit={false}
+            scrollEnabled={false}
+            ref="webview"
+            onNavigationStateChange={event => {
+              console.log(event);
+
+              if (event.url != "about:blank") {
+                this.refs.webview.stopLoading();
+                Linking.openURL(event.url);
+              }
+            }} /> */}
+          <Markdown
+            body={section.content}
+            pureCSS={htmlStyles}
+            scalesPageToFit={false}
+            scrollEnabled={false}
+          />
+        </Content>
       </Container>
+      </ScrollView>
     );
   }
 }
 
 export default SectionScreen;
+
+const htmlContent = `
+      <h2>This is a title</h2>
+      <p>This <strong>is</strong> a <a href="http://designcode.io">link</a></p>
+      <img src="https://cl.ly/8861f359ed6d/download/Wave14.jpg" />
+    `;
+
+const htmlStyles = `
+
+      * {
+        font-family: -apple-system, Roboto; 
+    		margin: 0;
+    		padding: 5px;
+        font-size: 17px; 
+        font-weight: normal; 
+        color: #3c4560;
+        line-height: 24px;
+      }
+
+      img {
+        width: 100%;
+        border-radius: 10px;
+        margin-top: 20px;
+
+      }
+    
+      h2 {
+        font-size: 20px;
+        text-transform: uppercase;
+        color: #b8bece;
+        font-weight: 600;
+        margin-top: 50px;
+      }
+
+      p {
+    	  margin-top: 20px;
+      }
+    
+      a {
+        color: #4775f2;
+        font-weight: 600;
+        text-decoration: none;
+      }
+    
+      strong {
+        font-weight: 700;
+      }
+
+      pre {
+        padding: 20px;
+        background: #212C4F;
+        overflow: hidden;
+        word-wrap: break-word;
+        border-radius: 10px;
+        margin-top: 20px;
+      }
+      
+      code {
+        color: white;
+      }
+    
+`
 
 const Container = styled.View`
   flex: 1;
@@ -124,4 +210,9 @@ const Subtitle = styled.Text`
   color: rgba(255, 255, 255, 0.8);
   margin-left: 5px;
   text-transform: uppercase;
+`;
+
+const Content = styled.View`
+height: 1000px;
+/* padding: 15px; */
 `;
