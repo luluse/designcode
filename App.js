@@ -1,8 +1,19 @@
 import React from 'react';
 import { createStore } from "redux";
 import { Provider } from "react-redux";
-
 import AppNavigator from './navigator/AppNavigator';
+import ApolloClient from "apollo-boost";
+import { ApolloProvider } from "react-apollo";
+import { URI_CONTENTFUL, BEARER_KEY } from '@env';
+
+
+const client = new ApolloClient({
+  uri: `${URI_CONTENTFUL}`,
+  credentials: "same-origin",
+  headers: {
+    Authorization: `Bearer ${BEARER_KEY}`
+  }
+});
 
 const initialState = {
   action: ''
@@ -22,9 +33,11 @@ const reducer = (state = initialState, action) => {
 const store = createStore(reducer);
 
 const App = () => (
-  <Provider store={store}>
-    <AppNavigator />
-  </Provider>
+  <ApolloProvider client={client}>
+    <Provider store={store}>
+      <AppNavigator />
+    </Provider>
+  </ApolloProvider>
 );
 
 export default App;
