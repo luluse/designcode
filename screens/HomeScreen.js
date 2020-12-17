@@ -8,6 +8,42 @@ import { NotificationIcon } from '../components/Icons';
 import Logo from '../components/Logo';
 import Menu from '../components/Menu';
 import { connect } from "react-redux";
+import { Query } from "react-apollo";
+import gql from "graphql-tag";
+
+
+const CardsQuery = gql`
+      {
+        cardsCollection {
+          items {
+            title
+            subtitle
+            image {
+              title
+              description
+              contentType
+              fileName
+              size
+              url
+              width
+              height
+            }
+            subtitle
+            caption
+            logo {
+              title
+              description
+              contentType
+              fileName
+              size
+              url
+              width
+              height
+            }
+          }
+        }
+      }
+    `;
 
 function mapStateToProps(state) {
   return { action: state.action };
@@ -34,7 +70,7 @@ class HomeScreen extends React.Component {
 
   componentDidMount() {
     StatusBar.setBarStyle('dark-content', true);
-  }  
+  }
 
   componentDidUpdate() {
     this.toggleMenu();
@@ -53,7 +89,7 @@ class HomeScreen extends React.Component {
 
       StatusBar.setBarStyle('light-content', true);
     }
-  
+
     if (this.props.action == 'closeMenu') {
       Animated.timing(this.state.scale, {
         toValue: 1,
@@ -61,7 +97,7 @@ class HomeScreen extends React.Component {
         easing: Easing.in()
       }).start();
       Animated.spring(this.state.opacity, {
-          toValue: 1
+        toValue: 1
       }).start();
 
       StatusBar.setBarStyle('dark-content', true);
@@ -73,59 +109,72 @@ class HomeScreen extends React.Component {
     return (
       <RootView>
         <Menu />
-      <AnimatedContainer style={{ transform: [{scale: this.state.scale}], opacity: this.state.opacity }}>
-        <SafeAreaView>
-          <ScrollView style={{ height: '100%' }}>
-            <TitleBar>
-              <TouchableOpacity onPress={this.props.openMenu} style={{ position: 'absolute', top: 0, left: 20}}>
-                <Avatar source={require('../assets/avatar.jpg')} />
-              </TouchableOpacity>
-              <Title>Welcome to React native</Title>
-              <Name>Lulu</Name>
-              <NotificationIcon style={{ position: "absolute", right: 20, top: 5 }} />
-
-            </TitleBar>
-            <ScrollView style={{ flexDirection: 'row', padding: 20, paddingLeft: 12, paddingTop: 30 }} horizontal={true} showsHorizontalScrollIndicator={false}>
-              {logos.map((logo, index) => (
-                <Logo key={index} image={logo.image} text={logo.text} />
-              ))}
-
-            </ScrollView>
-            <Subtitle>Continue learning</Subtitle>
-            <ScrollView horizontal={true} style={{ paddingBottom: 30 }} showsHorizontalScrollIndicator={false}>
-              {cards.map((card, index) => (
-                <TouchableOpacity key={index} onPress={() => {
-                  this.props.navigation.push("Section", {
-                    section: card
-                  });
-                }}>
-                <Card
-                  key={index}
-                  title={card.title}
-                  image={card.image}
-                  caption={card.caption}
-                  logo={card.logo}
-                  subtitle={card.subtitle}
-                />
+        <AnimatedContainer style={{ transform: [{ scale: this.state.scale }], opacity: this.state.opacity }}>
+          <SafeAreaView>
+            <ScrollView style={{ height: '100%' }}>
+              <TitleBar>
+                <TouchableOpacity onPress={this.props.openMenu} style={{ position: 'absolute', top: 0, left: 20 }}>
+                  <Avatar source={require('../assets/avatar.jpg')} />
                 </TouchableOpacity>
+                <Title>Welcome to React native</Title>
+                <Name>Lulu</Name>
+                <NotificationIcon style={{ position: "absolute", right: 20, top: 5 }} />
+
+              </TitleBar>
+              <ScrollView style={{ flexDirection: 'row', padding: 20, paddingLeft: 12, paddingTop: 30 }} horizontal={true} showsHorizontalScrollIndicator={false}>
+                {logos.map((logo, index) => (
+                  <Logo key={index} image={logo.image} text={logo.text} />
+                ))}
+
+              </ScrollView>
+              <Subtitle>Continue learning</Subtitle>
+              <ScrollView horizontal={true} style={{ paddingBottom: 30 }} showsHorizontalScrollIndicator={false}>
+                <Query query={CardsQuery}>
+                  {({ loading, error, data }) => {
+                    if (loading) return <Message>Loading...</Message>;
+                    if (error) return <Message>Error...</Message>;
+
+                    return (
+                      <CardsContainer>
+                        {data.cardsCollection.items.map((card, index) => (
+                          <TouchableOpacity
+                            key={index}
+                            onPress={() => {
+                              this.props.navigation.push("Section", {
+                                section: card
+                              });
+                            }}>
+                            <Card
+                              key={index}
+                              title={card.title}
+                              image={{ uri: card.image.url }}
+                              caption={card.caption}
+                              logo={{ uri: card.logo.url }}
+                              subtitle={card.subtitle}
+                            />
+                          </TouchableOpacity>
+                        ))}
+                      </CardsContainer>
+                    );
+                  }}
+                </Query>
+                
+              </ScrollView>
+              <Subtitle> Popular Courses</Subtitle>
+              {courses.map((course, index) => (
+                <Course key={index}
+                  title={course.title}
+                  subtitle={course.subtitle}
+                  image={course.image}
+                  logo={course.logo}
+                  author={course.author}
+                  avatar={course.avatar}
+                  caption={course.caption} />
               ))}
 
             </ScrollView>
-            <Subtitle> Popular Courses</Subtitle>
-            {courses.map((course, index) => (
-              <Course key={index}
-                title={course.title}
-                subtitle={course.subtitle}
-                image={course.image}
-                logo={course.logo}
-                author={course.author}
-                avatar={course.avatar}
-                caption={course.caption} />
-            ))}
-
-          </ScrollView>
-        </SafeAreaView>
-      </AnimatedContainer>
+          </SafeAreaView>
+        </AnimatedContainer>
       </RootView>
     );
   }
@@ -179,7 +228,18 @@ width: 44px;
 height: 44px;
 background: black;
 border-radius: 22px;
-`
+`;
+
+const Message = styled.Text`
+margin: 20px;
+color: #b8bece;
+font-size: 15px;
+font-weight: 500;
+`;
+
+const CardsContainer = styled.View`
+flex-direction: row;
+`;
 
 const logos = [
   {
