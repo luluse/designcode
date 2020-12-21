@@ -7,7 +7,7 @@ import Markdown from "react-native-showdown";
 
 class SectionScreen extends React.Component {
   static navigationOptions = {
-    header: null
+    headerShown: false
   };
 
   componentDidMount() {
@@ -174,7 +174,7 @@ const Title = styled.Text`
 
 const Caption = styled.Text`
   color: white;
-  font-size: 17;
+  font-size: 17px;
   position: absolute;
   bottom: 20px;
   left: 20px;
