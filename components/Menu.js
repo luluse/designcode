@@ -1,11 +1,12 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Animated, TouchableOpacity, Dimensions } from 'react-native';
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons } from '@expo/vector-icons';
 import MenuItem from './MenuItems';
 import { connect } from 'react-redux';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-let screenWidth = Dimensions.get("window").width;
+let screenWidth = Dimensions.get('window').width;
 var cardWidth = screenWidth;
 if (screenWidth > 500) {
   cardWidth = 500;
@@ -20,7 +21,18 @@ function mapDispatchToProps(dispatch) {
     closeMenu: () =>
       dispatch({
         type: 'CLOSE_MENU'
+      }),
+    updateName: name =>
+      dispatch({
+        type: 'UPDATE_NAME',
+        name
+      }),
+    updateAvatar: avatar =>
+      dispatch({
+        type: 'UPDATE_AVATAR',
+        avatar
       })
+
   };
 }
 
@@ -34,21 +46,31 @@ class Menu extends React.Component {
   componentDidMount() {
     this.toggleMenu();
   }
-  
-  componentDidUpdate(){
+
+  componentDidUpdate() {
     this.toggleMenu();
   }
 
   toggleMenu = () => {
-    if (this.props.action === 'openMenu'){
+    if (this.props.action === 'openMenu') {
       Animated.spring(this.state.top, {
         toValue: 54
       }).start();
     }
-    if(this.props.action === 'closeMenu'){
+    if (this.props.action === 'closeMenu') {
       Animated.spring(this.state.top, {
         toValue: screenHeight
       }).start();
+    }
+  };
+
+  handleMenu = index => {
+    if (index === 3) {
+      this.props.closeMenu();
+      this.props.updateName('Stranger');
+      this.props.updateAvatar(
+        'https://cl.ly/55da82beb939/download/avatar-default.jpg');
+      AsyncStorage.clear();
     }
   };
 
@@ -63,16 +85,22 @@ class Menu extends React.Component {
         </Cover>
         <TouchableOpacity onPress={this.props.closeMenu} style={{ position: 'absolute', top: 120, left: '50%', marginLeft: -22, zIndex: 1 }}>
           <CloseView>
-            <Ionicons name="ios-close" size={44} color="#546bfb" /></CloseView>
+            <Ionicons name='ios-close' size={44} color='#546bfb' /></CloseView>
         </TouchableOpacity>
         <Content>
           {items.map((item, index) => (
-            <MenuItem
+            <TouchableOpacity
               key={index}
-              icon={item.icon}
-              title={item.title}
-              text={item.text}
-            />
+              onPress={() => {
+                this.handleMenu(index);
+              }}>
+              <MenuItem
+
+                icon={item.icon}
+                title={item.title}
+                text={item.text}
+              />
+            </TouchableOpacity>
           ))}
         </Content>
       </AnimatedContainer>
@@ -140,23 +168,23 @@ const Subtitle = styled.Text`
 
 const items = [
   {
-    icon: "ios-settings",
-    title: "Account",
-    text: "settings"
+    icon: 'ios-settings',
+    title: 'Account',
+    text: 'settings'
   },
   {
-    icon: "ios-card",
-    title: "Billing",
-    text: "payments"
+    icon: 'ios-card',
+    title: 'Billing',
+    text: 'payments'
   },
   {
-    icon: "ios-compass",
-    title: "Learn React",
-    text: "start course"
+    icon: 'ios-compass',
+    title: 'Learn React',
+    text: 'start course'
   },
   {
-    icon: "ios-exit",
-    title: "Log out",
-    text: "see you soon!"
+    icon: 'ios-exit',
+    title: 'Log out',
+    text: 'see you soon!'
   }
 ]
