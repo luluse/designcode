@@ -3,14 +3,17 @@ import { ScrollView, SafeAreaView, TouchableOpacity, Animated, Easing, StatusBar
 import styled from 'styled-components';
 import Card from '../components/Card';
 import Course from '../components/Course';
-// import { Ionicons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 import { NotificationIcon } from '../components/Icons';
 import Logo from '../components/Logo';
 import Menu from '../components/Menu';
-import { connect } from "react-redux";
-import { Query } from "react-apollo";
-import gql from "graphql-tag";
-
+import { connect } from 'react-redux';
+import { Query } from 'react-apollo';
+import gql from 'graphql-tag';
+import ModalLogin from '../components/ModalLogin';
+import Avatar from '../components/Avatar';
+import NotificationButton from '../components/NotificationButton';
+import Notifications from '../components/Notifications';
 
 const CardsQuery = gql`
       {
@@ -47,7 +50,7 @@ const CardsQuery = gql`
     `;
 
 function mapStateToProps(state) {
-  return { action: state.action };
+  return { action: state.action, name: state.name };
 }
 
 function mapDispatchToProps(dispatch) {
@@ -55,13 +58,21 @@ function mapDispatchToProps(dispatch) {
     openMenu: () =>
       dispatch({
         type: 'OPEN_MENU'
+      }),
+    openLogin: () =>
+      dispatch({
+        type: 'OPEN_LOGIN'
+      }),
+    openNotif: () =>
+      dispatch({
+        type: 'OPEN_NOTIF'
       })
   };
 }
 
 class HomeScreen extends React.Component {
   static navigationOptions = {
-    header: null
+    headerShown: false
   };
 
   state = {
@@ -72,7 +83,7 @@ class HomeScreen extends React.Component {
   componentDidMount() {
     StatusBar.setBarStyle('dark-content', true);
 
-    if (Platform.OS === "android") StatusBar.setBarStyle("light-content", true);
+    if (Platform.OS === 'android') StatusBar.setBarStyle('light-content', true);
   }
 
   componentDidUpdate() {
@@ -107,21 +118,36 @@ class HomeScreen extends React.Component {
     }
   };
 
+  handleAvatar = () => {
+    if (this.props.name !== 'Stranger') {
+      this.props.openMenu();
+    } else {
+      this.props.openLogin();
+    }
+  };
+
   render() {
 
     return (
       <RootView>
         <Menu />
+        <Notifications />
         <AnimatedContainer style={{ transform: [{ scale: this.state.scale }], opacity: this.state.opacity }}>
           <SafeAreaView>
             <ScrollView style={{ height: '100%' }}>
               <TitleBar>
-                <TouchableOpacity onPress={this.props.openMenu} style={{ position: 'absolute', top: 0, left: 20 }}>
-                  <Avatar source={require('../assets/avatar-default.jpg')} />
+                <TouchableOpacity onPress={this.handleAvatar} style={{ position: 'absolute', left: 20 }}>
+                  {/* <Avatar source={require('../assets/avatar-default.jpg')} /> */}
+                  <Avatar />
                 </TouchableOpacity>
                 <Title>Welcome to React native</Title>
-                <Name>Lulu</Name>
-                <NotificationIcon style={{ position: "absolute", right: 20, top: 5 }} />
+                <Name>{this.props.name}</Name>
+                <TouchableOpacity
+                  onPress={() => this.props.openNotif()}
+                  style={{ position: 'absolute', right: 20, top: 5 }}
+                >
+                  <NotificationButton />
+                </TouchableOpacity>
 
               </TitleBar>
               <ScrollView style={{ flexDirection: 'row', padding: 20, paddingLeft: 12, paddingTop: 30 }} horizontal={true} showsHorizontalScrollIndicator={false}>
@@ -130,7 +156,7 @@ class HomeScreen extends React.Component {
                 ))}
 
               </ScrollView>
-              <Subtitle>{"Continue Learning".toUpperCase()}</Subtitle>
+              <Subtitle>{'Continue Learning'.toUpperCase()}</Subtitle>
               <ScrollView horizontal={true} style={{ paddingBottom: 30 }} showsHorizontalScrollIndicator={false}>
                 <Query query={CardsQuery}>
                   {({ loading, error, data }) => {
@@ -143,7 +169,7 @@ class HomeScreen extends React.Component {
                           <TouchableOpacity
                             key={index}
                             onPress={() => {
-                              this.props.navigation.push("Section", {
+                              this.props.navigation.push('Section', {
                                 section: card
                               });
                             }}>
@@ -164,7 +190,7 @@ class HomeScreen extends React.Component {
                 </Query>
 
               </ScrollView>
-              <Subtitle>{"Popular Courses".toUpperCase()}</Subtitle>
+              <Subtitle>{'Popular Courses'.toUpperCase()}</Subtitle>
               <CoursesContainer>
                 {courses.map((course, index) => (
                   <Course key={index}
@@ -180,6 +206,7 @@ class HomeScreen extends React.Component {
             </ScrollView>
           </SafeAreaView>
         </AnimatedContainer>
+        <ModalLogin />
       </RootView>
     );
   }
@@ -228,12 +255,12 @@ margin-top: 50px;
 padding-left: 80px; 
 `;
 
-const Avatar = styled.Image`
-width: 44px;
-height: 44px;
-background: black;
-border-radius: 22px;
-`;
+// const Avatar = styled.Image`
+// width: 44px;
+// height: 44px;
+// background: black;
+// border-radius: 22px;
+// `;
 
 const Message = styled.Text`
 margin: 20px;
@@ -315,40 +342,40 @@ const cards = [
 
 const courses = [
   {
-    title: "Prototype in InVision Studio",
-    subtitle: "10 sections",
-    image: require("../assets/background13.jpg"),
-    logo: require("../assets/logo-studio.png"),
-    author: "Meng To",
-    avatar: require("../assets/avatar.jpg"),
-    caption: "Design and interactive prototype"
+    title: 'Prototype in InVision Studio',
+    subtitle: '10 sections',
+    image: require('../assets/background13.jpg'),
+    logo: require('../assets/logo-studio.png'),
+    author: 'Meng To',
+    avatar: require('../assets/avatar.jpg'),
+    caption: 'Design and interactive prototype'
   },
   {
-    title: "React for Designers",
-    subtitle: "12 sections",
-    image: require("../assets/background11.jpg"),
-    logo: require("../assets/logo-react.png"),
-    author: "Meng To",
-    avatar: require("../assets/avatar.jpg"),
-    caption: "Learn to design and code a React site"
+    title: 'React for Designers',
+    subtitle: '12 sections',
+    image: require('../assets/background11.jpg'),
+    logo: require('../assets/logo-react.png'),
+    author: 'Meng To',
+    avatar: require('../assets/avatar.jpg'),
+    caption: 'Learn to design and code a React site'
   },
   {
-    title: "Design and Code with Framer X",
-    subtitle: "10 sections",
-    image: require("../assets/background14.jpg"),
-    logo: require("../assets/logo-framerx.png"),
-    author: "Meng To",
-    avatar: require("../assets/avatar.jpg"),
-    caption: "Create powerful design and code components for your app"
+    title: 'Design and Code with Framer X',
+    subtitle: '10 sections',
+    image: require('../assets/background14.jpg'),
+    logo: require('../assets/logo-framerx.png'),
+    author: 'Meng To',
+    avatar: require('../assets/avatar.jpg'),
+    caption: 'Create powerful design and code components for your app'
   },
   {
-    title: "Design System in Figma",
-    subtitle: "10 sections",
-    image: require("../assets/background6.jpg"),
-    logo: require("../assets/logo-figma.png"),
-    author: "Meng To",
-    avatar: require("../assets/avatar.jpg"),
+    title: 'Design System in Figma',
+    subtitle: '10 sections',
+    image: require('../assets/background6.jpg'),
+    logo: require('../assets/logo-figma.png'),
+    author: 'Meng To',
+    avatar: require('../assets/avatar-default.jpg'),
     caption:
-      "Complete guide to designing a site using a collaborative design tool"
+      'Complete guide to designing a site using a collaborative design tool'
   }
 ]
